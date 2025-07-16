@@ -1,10 +1,19 @@
 use std::sync::{Arc, Mutex};
 
+use jsonwebtoken::{encode, EncodingKey, Header};
 use poem::{handler, http::StatusCode, web::{Data, Json}};
 
 use store::{store::Store};
 
+use serde::{Serialize, Deserialize};
+
 use crate::{request_inputs::{SignInInput, SignUpInput}, request_outputs::{SignInOutput, SignUpOutput}};
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Claims {
+    sub: String,
+    exp: usize
+}
 
 #[handler]
 pub fn user_signup(
@@ -44,9 +53,17 @@ pub fn user_signup(
     let result_id = locked_s.sign_in(username, password);
 
     match result_id {
-        Ok(_id) => {
+        Ok(id) => {
+            let user_claim =  Claims {
+                sub: id,
+                exp: 60*60*24
+            };
+
+            let token = encode(&Header::default(), &user_claim, &EncodingKey::from_secret("secret".as_ref()))
+                .map_err(|_| poem::Error::from_status(StatusCode::INTERNAL_SERVER_ERROR))?;
+
             let response = SignInOutput {
-                jwt: String::from("username")
+                jwt: token
             };
         
             Ok(Json(response))
