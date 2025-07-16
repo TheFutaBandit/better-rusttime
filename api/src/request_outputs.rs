@@ -1,5 +1,4 @@
 use serde::{Serialize, Deserialize};
-use store::models::website::Website;
 
 #[derive(Serialize, Deserialize)]
 pub struct CreateWebsiteOutput {
@@ -17,7 +16,7 @@ pub struct SignInOutput {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct getWebsiteOutput {
+pub struct GetWebsiteOutput {
     pub website: String
 }
 
