@@ -17,6 +17,6 @@ pub struct SignInOutput {
 
 #[derive(Serialize, Deserialize)]
 pub struct GetWebsiteOutput {
-    pub website: String
+    pub website_response: String
 }
 

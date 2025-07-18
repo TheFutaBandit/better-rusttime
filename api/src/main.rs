@@ -18,7 +18,7 @@ async fn main() -> Result<(), std::io::Error> {
     let s: Arc<Mutex<Store>> = Arc::new(Mutex::new(Store::new().unwrap()));
 
     let app = Route::new()
-        .at("/website/:website_id", get(get_website))
+        .at("/website/status/:website_id", get(get_website))
         .at("/website", post(create_website))
         .at("/auth/sign-up", post(user_signup))
         .at("/auth/sign-in", post(user_signin))

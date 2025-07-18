@@ -18,8 +18,6 @@ impl<'a> FromRequest<'a> for UserId {
 
         let secret = jwt_config::jwt_config::default();
 
-        println!("The secret that we have is {} and the token we receive is {}", &secret.secret, token);
-
         let user_id = decode::<Claims>(&token, &DecodingKey::from_secret(&secret.secret.as_ref()), &Validation::default())
             .map_err(|_| poem::Error::from_string("Authentication Failure", StatusCode::FORBIDDEN))?;
 

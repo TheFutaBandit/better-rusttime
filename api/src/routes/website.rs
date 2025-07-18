@@ -11,13 +11,17 @@ use crate::{auth_middleware::UserId, request_inputs::CreateWebsiteInput, request
 
 
 #[handler]
-pub fn get_website(Path(website_id): Path<String>, Data(s) : Data<&Arc<Mutex<Store>>>) -> Json<GetWebsiteOutput> {
+pub fn get_website(
+    Path(website_id): Path<String>, 
+    Data(s) : Data<&Arc<Mutex<Store>>>,
+    UserId(user_id) : UserId
+) -> Json<GetWebsiteOutput> {
     let mut locked_s = s.lock().unwrap();
 
-    let website_response = locked_s.get_website(website_id).unwrap();
+    let website_response = locked_s.get_website(website_id, user_id).unwrap();
 
     let response = GetWebsiteOutput {
-        website: website_response.time_added.to_string()
+        website_response: website_response.id
     };
 
     Json(response)
