@@ -6,7 +6,7 @@ use poem::{handler, web::{Data, Json, Path}};
 
 use store::{store::Store};
 
-use crate::{request_inputs::{CreateWebsiteInput}, request_outputs::{CreateWebsiteOutput, GetWebsiteOutput}};
+use crate::{auth_middleware::UserId, request_inputs::CreateWebsiteInput, request_outputs::{CreateWebsiteOutput, GetWebsiteOutput}};
 
 
 
@@ -26,13 +26,17 @@ pub fn get_website(Path(website_id): Path<String>, Data(s) : Data<&Arc<Mutex<Sto
 }
 
 #[handler]
-pub fn create_website(Json(data) : Json<CreateWebsiteInput>, Data(s) : Data<&Arc<Mutex<Store>>>) -> Json<CreateWebsiteOutput> {
+pub fn create_website(
+    Json(data) : Json<CreateWebsiteInput>, 
+    Data(s) : Data<&Arc<Mutex<Store>>>,
+    UserId(user_id): UserId
+) -> Json<CreateWebsiteOutput> {
     // make db call
     let url = data.url;
 
     let mut locked_s = s.lock().unwrap();
 
-    let website_response = locked_s.create_website(url, String::from("e7f40797-70ec-4182-828c-320a78a5daed")).unwrap();
+    let website_response = locked_s.create_website(url, user_id).unwrap();
 
     let response = CreateWebsiteOutput{
         id: website_response.id

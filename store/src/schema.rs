@@ -7,6 +7,22 @@ pub mod sql_types {
 }
 
 diesel::table! {
+    _prisma_migrations (id) {
+        #[max_length = 36]
+        id -> Varchar,
+        #[max_length = 64]
+        checksum -> Varchar,
+        finished_at -> Nullable<Timestamptz>,
+        #[max_length = 255]
+        migration_name -> Varchar,
+        logs -> Nullable<Text>,
+        rolled_back_at -> Nullable<Timestamptz>,
+        started_at -> Timestamptz,
+        applied_steps_count -> Int4,
+    }
+}
+
+diesel::table! {
     region (id) {
         id -> Text,
         name -> Text,
@@ -49,6 +65,7 @@ diesel::joinable!(website_tick -> region (region_id));
 diesel::joinable!(website_tick -> website (website_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
+    _prisma_migrations,
     region,
     user,
     website,

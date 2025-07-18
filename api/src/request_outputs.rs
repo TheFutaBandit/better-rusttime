@@ -12,7 +12,7 @@ pub struct SignUpOutput {
 
 #[derive(Serialize, Deserialize)]
 pub struct SignInOutput {
-    pub jwt: String
+    pub token: String
 }
 
 #[derive(Serialize, Deserialize)]

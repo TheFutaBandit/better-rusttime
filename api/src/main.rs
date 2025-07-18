@@ -10,6 +10,8 @@ pub mod request_inputs;
 pub mod request_outputs;
 
 pub mod routes;
+pub mod auth_middleware;
+pub mod jwt_config;
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), std::io::Error> {
@@ -18,8 +20,8 @@ async fn main() -> Result<(), std::io::Error> {
     let app = Route::new()
         .at("/website/:website_id", get(get_website))
         .at("/website", post(create_website))
-        .at("/user/sign_up", post(user_signup))
-        .at("/user/sign_in", post(user_signin))
+        .at("/auth/sign-up", post(user_signup))
+        .at("/auth/sign-in", post(user_signin))
         .data(s);
     
     Server::new(TcpListener::bind("0.0.0.0:3000"))

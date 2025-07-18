@@ -7,11 +7,11 @@ use store::{store::Store};
 
 use serde::{Serialize, Deserialize};
 
-use crate::{request_inputs::{SignInInput, SignUpInput}, request_outputs::{SignInOutput, SignUpOutput}};
+use crate::{jwt_config, request_inputs::{SignInInput, SignUpInput}, request_outputs::{SignInOutput, SignUpOutput}};
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Claims {
-    sub: String,
+pub struct Claims {
+    pub sub: String,
     exp: usize
 }
 
@@ -52,23 +52,27 @@ pub fn user_signup(
 
     let result_id = locked_s.sign_in(username, password);
 
+    let secret = jwt_config::jwt_config::default();
+
+
+
     match result_id {
         Ok(id) => {
             let user_claim =  Claims {
                 sub: id,
-                exp: 60*60*24
+                exp: 60*60*24*100000000000
             };
 
-            let token = encode(&Header::default(), &user_claim, &EncodingKey::from_secret("secret".as_ref()))
+            let token = encode(&Header::default(), &user_claim, &EncodingKey::from_secret(&secret.secret.as_ref()))
                 .map_err(|_| poem::Error::from_status(StatusCode::INTERNAL_SERVER_ERROR))?;
 
             let response = SignInOutput {
-                jwt: token
+                token: token
             };
         
             Ok(Json(response))
         },
-        Err(_) => Err(poem::Error::from_status(StatusCode::UNAUTHORIZED))
+        Err(_) => Err(poem::Error::from_status(StatusCode::FORBIDDEN))
     }
 
     

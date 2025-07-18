@@ -14,7 +14,10 @@ pub struct Website {
 }
 
 impl Store {
-    pub fn create_website(&mut self, url: String, user_id: String) -> Result<Website, diesel::result::Error> {
+    pub fn create_website(
+        &mut self, url: String, 
+        user_id: String
+    ) -> Result<Website, diesel::result::Error> {
         let id = uuid::Uuid::new_v4();
 
         let w = Website {
